@@ -1,0 +1,6 @@
+1. Descargar Python https://www.python.org/downloads/
+2. Crear cuenta en github https://github.com/
+3. Descargar GIT https://git-scm.com/install/windows
+4. Descargar visual studio code https://code.visualstudio.com/
+5. Crear una nueva carpeta, entrar a la misma, click derecho y clickear en "Open Git Bash here"
+6. Poner en la consola "git clone https://github.com/juanmarobles/library-manager.git" (sin las comillas)
