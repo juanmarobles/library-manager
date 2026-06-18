@@ -51,7 +51,8 @@ def main():
                 print("Libros más solicitados")
 
             elif opcion == 8:
-                print("Cantidad de préstamos realizados")
+                cantidad = biblioteca.cantidad_prestamos_realizados()
+                print(f"Cantidad de préstamos realizados: {cantidad}")
 
             elif opcion == 0:
                 print("Gracias por usar la Biblioteca Municipal.")

@@ -21,3 +21,11 @@ class Biblioteca:
 
         self.usuarios.append(usuario)
 
+    def agregar_prestamo(self, prestamo):
+
+        self.prestamos.append(prestamo)
+
+    def cantidad_prestamos_realizados(self):
+
+        return len(self.prestamos)
+
