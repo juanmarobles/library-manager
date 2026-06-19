@@ -68,6 +68,10 @@ class Biblioteca:
                 
                 if opcion == 3: ##control de disponibilidad
                     self.mostrar_libros();
+                
+                if opcion == 6: ##cantidad de prestamos
+                   cantidad = self.cantidad_prestamos_realizados()
+                   print(f"Cantidad de préstamos realizados: {cantidad}")
                
                 elif opcion == 0:
                     print("Cerrado sesion...")
@@ -111,6 +115,9 @@ class Biblioteca:
                     f"{i + 1}. {libro.titulo} - "
                     f"{libro.autor} (Disponible)"
                 )
+                
+    def cantidad_prestamos_realizados(self):
+        return len(self.prestamos)
 
 
     
