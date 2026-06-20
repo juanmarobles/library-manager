@@ -65,14 +65,17 @@ class Biblioteca:
             try:
                 if opcion == 1: ##prestamo libros
                     self.prestar_libro(usuario);
-                
-                if opcion == 3: ##control de disponibilidad
+                elif opcion == 2: ##devoluciones
+                    print("Función de devoluciones en desarrollo.")
+                elif opcion == 3: ##control de disponibilidad
                     self.mostrar_libros();
-                
-                if opcion == 6: ##cantidad de prestamos
+                elif opcion == 4: ##multas
+                    print("Función de cálculo de multas en desarrollo.")
+                elif opcion == 5: ##libros más solicitados
+                    self.mostrar_libros_mas_solicitados()
+                elif opcion == 6: ##cantidad de prestamos
                    cantidad = self.cantidad_prestamos_realizados()
                    print(f"Cantidad de préstamos realizados: {cantidad}")
-               
                 elif opcion == 0:
                     print("Cerrado sesion...")
 
@@ -115,6 +118,21 @@ class Biblioteca:
                     f"{i + 1}. {libro.titulo} - "
                     f"{libro.autor} (Disponible)"
                 )
+
+    def mostrar_libros_mas_solicitados(self):
+        libros_ordenados = sorted(
+            self.libros,
+            key=lambda libro: libro.veces_prestado,
+            reverse=True
+        )
+
+        if not libros_ordenados:
+            print("No hay libros cargados.")
+            return
+
+        print("\n=== Libros más solicitados ===")
+        for libro in libros_ordenados:
+            print(f"{libro.titulo} - {libro.autor}: {libro.veces_prestado} préstamos")
                 
     def cantidad_prestamos_realizados(self):
         return len(self.prestamos)
