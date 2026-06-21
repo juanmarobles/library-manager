@@ -1,5 +1,11 @@
 from modelos.usuario import Usuario
 from modelos.libro import Libro
+from modelos.prestamo import Prestamo
+from datetime import datetime, timedelta
+
+DIAS_LIMITE = 7
+TARIFA_POR_DIA = 10
+
 class Biblioteca:
 
     def mostrar_menu_usuario(self, nombre: str):
@@ -66,11 +72,11 @@ class Biblioteca:
                 if opcion == 1: ##prestamo libros
                     self.prestar_libro(usuario);
                 elif opcion == 2: ##devoluciones
-                    print("Función de devoluciones en desarrollo.")
+                     self.devolver_libro(usuario) 
                 elif opcion == 3: ##control de disponibilidad
                     self.mostrar_libros();
                 elif opcion == 4: ##multas
-                    print("Función de cálculo de multas en desarrollo.")
+                    self.calcular_multas(usuario) 
                 elif opcion == 5: ##libros más solicitados
                     self.mostrar_libros_mas_solicitados()
                 elif opcion == 6: ##cantidad de prestamos
@@ -94,11 +100,74 @@ class Biblioteca:
         if libro.disponible:
             libro.disponible = False
             libro.veces_prestado += 1
-            self.prestamos.append((usuario, libro)) ##falta pasar fecha_prestado, ver libreria o alguna funcion
-
-            print(f"Prestamo realizado: {libro.titulo}")
+            prestamo = Prestamo(usuario, libro)   
+            ##prestamo.fecha_prestamo = datetime.now() - timedelta(days=10) ##descomentar para testear la multa, le puse 10 dias, cosa de q salga 3 dias de atraso 3x10=30
+            self.prestamos.append(prestamo)
+            print(f"Préstamo realizado: {libro.titulo}")
+            print(f"Fecha de préstamo: {prestamo.fecha_prestamo.strftime('%d/%m/%Y')}")
+            print(f"Devolver antes del: {(prestamo.fecha_prestamo + timedelta(days=DIAS_LIMITE)).strftime('%d/%m/%Y')}")
         else:
-                print("El libro ya está prestado")
+            print("El libro ya está prestado.")
+
+    def devolver_libro(self, usuario):
+        prestamos_usuario = [p for p in self.prestamos if p.usuario == usuario]
+
+        if not prestamos_usuario:
+            print("No tenés libros prestados.")
+            return
+
+        print("\n=== Tus libros prestados ===")
+        for i, p in enumerate(prestamos_usuario):
+            fecha_limite = p.fecha_prestamo + timedelta(days=DIAS_LIMITE)
+            print(f"{i + 1}. {p.libro.titulo} - prestado el {p.fecha_prestamo.strftime('%d/%m/%Y')} (límite: {fecha_limite.strftime('%d/%m/%Y')})")
+
+        try:
+            opcion = int(input("Seleccione el libro a devolver (0 para cancelar): ")) - 1
+        except ValueError:
+            print("Opción inválida.")
+            return
+
+        if opcion == -1:
+            return
+        if opcion < 0 or opcion >= len(prestamos_usuario):
+            print("Opción inválida.")
+            return
+
+        prestamo = prestamos_usuario[opcion]
+        prestamo.libro.disponible = True
+        self.prestamos.remove(prestamo)
+        print(f"Libro '{prestamo.libro.titulo}' devuelto correctamente.")
+
+        hoy = datetime.now()
+        dias_atraso = (hoy - prestamo.fecha_prestamo - timedelta(days=DIAS_LIMITE)).days
+        if dias_atraso > 0:
+            multa = dias_atraso * TARIFA_POR_DIA
+            print(f"Tenes {dias_atraso} día(s) de atraso. Multa: ${multa}")
+        else:
+            print("Devuelto en termino. Sin multa.")
+
+    def calcular_multas(self, usuario):
+        prestamos_usuario = [p for p in self.prestamos if p.usuario == usuario]
+
+        if not prestamos_usuario:
+            print("No tenes libros prestados.")
+            return
+
+        hoy = datetime.now()
+        print("\n=== Cálculo de multas ===")
+        hay_multas = False
+
+        for p in prestamos_usuario:
+            dias_atraso = (hoy - p.fecha_prestamo - timedelta(days=DIAS_LIMITE)).days
+            if dias_atraso > 0:
+                multa = dias_atraso * TARIFA_POR_DIA
+                print(f"• {p.libro.titulo}: {dias_atraso} día(s) de atraso → ${multa}")
+                hay_multas = True
+
+        if not hay_multas:
+            print("No tenes multas pendientes. Todos los libros están en termino.")
+
+
 
     
     
